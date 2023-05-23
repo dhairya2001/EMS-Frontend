@@ -1,0 +1,49 @@
+.tableFixHead {
+  overflow-y: auto;
+  max-height: 400px;
+}
+.tableFixHead thead th {
+  position: sticky;
+  top: 0px; 
+}
+
+.table {
+  border-collapse: collapse; 
+  width: 100%;
+}
+tr{
+  height: 10px;
+  cursor: auto;
+}
+#expenses {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #expenses td, #expenses th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #expenses tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #expenses tr:hover {background-color: #ddd;}
+  
+  #expenses th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #009dec;
+    color: white;
+  }
+
+  button{
+    background-color:#7faec5;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-right: 4px;
+    margin-left: 4px
+  }
