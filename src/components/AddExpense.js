@@ -8,6 +8,9 @@ import ViewBudget from './ViewBudget';
 import './Home.css'
 import { toast,ToastContainer } from 'react-toastify';
 import {ExpData,useExpData} from './ExpenseData'
+import Header from './Header';
+import { useMediaQuery } from '@chakra-ui/react';
+import { BaseURL } from './BaseURL';
 
 const validationAddExpense = (date,money,category) =>{
     let errors={};
@@ -29,12 +32,9 @@ function AddExpense() {
     const [category,setCategory]=useState("--Select--");
     const [errors,setErrors] =useState({});
     const [categoryData,setCategoryData]=useState([]);
-
+    const [isMobile] = useMediaQuery('(max-width:600px)');
+    
     const navigate=useNavigate();
-    const logOut=()=>{
-        window.localStorage.removeItem('user.token');
-        navigate("/");
-    }
     const handleDateChange=(e)=>{
         setDate(e.target.value);
     }
@@ -48,7 +48,7 @@ function AddExpense() {
     const getCategory = async(e) =>{
         try {
             const token=localStorage.getItem('user.token');
-            await axios.get('http://localhost:5000/category',
+            await axios.get(`${BaseURL}/category`,
             {   
                 params:{type:category},
                 headers:{
@@ -77,7 +77,7 @@ function AddExpense() {
         try{
             const token=localStorage.getItem('user.token');
             console.log(token);
-            const req=await axios.post('http://localhost:5000/ems',{
+            const req=await axios.post(`${BaseURL}/ems`,{
                 date:date,category:category,money:money},
                 { 
                     headers:{
@@ -114,20 +114,7 @@ function AddExpense() {
   return (
         <div className="container-fluid">
         <div className="row">
-            <nav className="navbar navbar-dark bg-dark">
-                <div className="container-fluid">
-                    <Link to="/home" element={<Home/>} className="navbar-brand">Expense Management System</Link>
-                    <form className="d-flex">
-                    <Link to="/add/expense" element={<AddExpense/>} className="navbar-brand">Add Expense </Link>  
-                    <Link to="/view/expense" element={<ViewExpense/>} className="navbar-brand">View Expense </Link>
-                    <Link to="/add/category" element={<AddCategory/>} className="navbar-brand">Add Category </Link>
-                    <Link to="/view/budget" element={<ViewBudget/>} className="navbar-brand">View Budget</Link>
-                    <button className="form-control me-2 btn btn-danger" type="submit" onClick={logOut}>
-                            LogOut
-                    </button>
-                    </form>
-                </div>
-            </nav>
+            <Header/>
             <div className='bg'>
                 <div className='bg bg2'>
                     <div className='bg bg3'>
@@ -136,37 +123,41 @@ function AddExpense() {
                 </div>
             </div>
             <div className="row d-flex justify-content-center align-items-center m-auto">
-                <div className="card bg-dark text-white mt-4 ml-2" style={{borderRadius:'1rem',width:'50%'}}>
-                    <p className="row d-flex fw-bold justify-content-center mt-4 display-6" >Add New Expense<hr/></p>
-                    <div className='d-flex mt-2 mb-2 justify-content-center'>
+                <div className="card bg-dark text-white mt-4 ml-2" style={{borderRadius:'1rem',maxWidth:isMobile?"90%":"50%"}}>
+                    <p className="row d-flex fw-bold justify-content-center mt-4 display-6" style={{textAlign:'center'}} >Add New Expense<hr/></p>
+                    <div style={{display:!isMobile?'flex':'',marginTop:'10px',marginBottom:'15px',justifyContent:'center',textAlign:'center'}} >
                         <label>Date :&nbsp;</label>
                         <input
-                            type='date'
+                            type='date' 
                             value={date}
                             onChange={handleDateChange}
                         />
                     </div>
                     {errors.date && <p className='error d-flex justify-content-center' style={{color:"red"}}>{errors.date}</p>}
-                    <div className="d-flex mt-2 mb-2 justify-content-center m-auto">
-                    <label className='form-label'>Category :&nbsp;</label>
-                        <select onChange={handleCategoryChange} value={category} >
-                            <option>--Select--</option>
-                            {renderOption()}
-                        </select>
+                    
+                    <div style={{display:!isMobile?'flex':'',marginTop:'10px',marginBottom:'15px',justifyContent:'center',textAlign:'center'}}>
+                        <label className='form-label'>Category :&nbsp;</label>
+                            <select  onChange={handleCategoryChange} value={category} >
+                                <option>--Select--</option>
+                                {renderOption()}
+                            </select>
                     </div>
                     {errors.category && <p className='error d-flex justify-content-center' style={{color:"red"}}>{errors.category}</p>}
-                    <div className='d-flex mt-2 justify-content-center'>
+                   
+                    <div style={{display:!isMobile?'flex':'',marginTop:'10px',marginBottom:'15px',justifyContent:'center',textAlign:'center'}}>
                         <label>Amount :&nbsp;</label>
                         <input
-                            type='Number'
+                            type='number'
                             value={money}
                             onChange={handleMoneyChange}
-                            placeholder='Enter Amount spent '
+                            placeholder='Ex. 40'
+                            min="0"  // minimum allowable value
+                            max="9999999999"
                         />
                     </div>
                     {errors.money && <p className='error d-flex justify-content-center' style={{color:"red"}}>{errors.money}</p>}
-                    <div className='d-flex justify-content-center mt-4'>
-                        <button type="button" className="btn btn-success mb-1" onClick={handleSubmit}>Add</button>
+                    <div className='d-flex justify-content-center mt-3'>
+                        <button type="button" className="btn btn-success mb-4" onClick={handleSubmit}>Add</button>
                     </div>
                     <ToastContainer
                         position="top-right"

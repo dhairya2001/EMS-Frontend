@@ -4,6 +4,7 @@ import Login from './Login';
 import axios from 'axios';
 import { Link,useNavigate } from 'react-router-dom';
 import { toast,ToastContainer } from 'react-toastify';
+import { BaseURL } from './BaseURL';
 
 const validationSignUp=(values)=>{
     let errors={};
@@ -43,7 +44,7 @@ function SignUp() {
         const {email,pass,name}=values;
         try{
             
-            const verify=await axios.post('http://localhost:5000/user/signUp',{email:email,password:pass,name:name},
+            const verify=await axios.post(`${BaseURL}/user/signUp`,{email:email,password:pass,name:name},
                 {
                     headers:{
                         'content-type':'application/json'
@@ -70,7 +71,7 @@ function SignUp() {
         }
     }
   return (
-    <section className="vh-120 gradient-custom">
+    <section className="vh-100 gradient-custom">
         <div className="container py-5   h-50 m-auto">
         <div className="row d-flex justify-content-center align-items-center h-100">
         <div className="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -142,7 +143,7 @@ function SignUp() {
                     pauseOnHover
                     theme="dark"
                 />
-                    <p className="fw-bold mt-2 mb-1">Already have an account &nbsp;  
+                    <p className="fw-bold mt-2 mb-0">Already have an account &nbsp;  
                     <Link to='/' element={<Login/>} className="text-white-50 fw-bold">
                     Login
                     </Link>

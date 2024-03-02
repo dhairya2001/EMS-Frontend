@@ -4,6 +4,7 @@ import SignUp from './SignUp';
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { toast,ToastContainer } from 'react-toastify';
+import { BaseURL } from './BaseURL';
 
 const validationLogIn = (values) =>{
     let errors={};
@@ -39,7 +40,7 @@ function Login() {
         const {email,pass}=values;
         try{
             
-            const verify=await axios.post('http://localhost:5000/user/logIn',{email:email,password:pass},
+            const verify=await axios.post(`${BaseURL}/user/logIn`,{email:email,password:pass},
                 {
                     headers:{
                         'content-type':'application/json',

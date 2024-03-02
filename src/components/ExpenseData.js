@@ -1,8 +1,8 @@
 import React,{useState,useEffect, useContext} from 'react'
 import { createContext } from 'react';
 import axios from 'axios';
-import ViewExpense from './ViewExpense';
 import AddExpense from './AddExpense';
+import { BaseURL } from './BaseURL';
 
 export const ExpData=createContext()
 
@@ -12,7 +12,7 @@ export const ExpenseData=()=> {
         try {
             const token=localStorage.getItem('user.token');
             // console.log(token);
-            const result=await axios.get('http://localhost:5000/category',
+            const result=await axios.get(`${BaseURL}/category`,
             {   
                 // params:{type:category},
                 headers:{

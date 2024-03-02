@@ -8,13 +8,17 @@ import ViewExpense from './ViewExpense'
 import AddCategory from './AddCategory'
 import './Home.css'
 import useTable from './tableHooks'
+import Header from './Header';
+import { useMediaQuery } from '@chakra-ui/react';
+import { BaseURL } from './BaseURL';
 
 function ViewBudget() {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const [categoryData,setCategoryData]=useState([]);
     const [expenseData,setExpenseData]=useState([]);
-    const [month,setMonth]=useState('--Select--');
+    const [month,setMonth]=useState('January');
     const [page,setPage]=useState(1);
+    const [isMobile]=useMediaQuery('(max-width:600px)');
     const year=new Date().getFullYear();
     const rows=6;
     const navigate=useNavigate();
@@ -24,7 +28,7 @@ function ViewBudget() {
     const getCategory = async(e) =>{
         try {
             const token=localStorage.getItem('user.token');
-            const result=await axios.get('http://localhost:5000/category',
+            const result=await axios.get(`${BaseURL}/category`,
             {   
                 headers:{
                 'Content-Type':'application/json',
@@ -43,7 +47,7 @@ function ViewBudget() {
         try {
             const token=localStorage.getItem('user.token');
             console.log(token);
-            const result=await axios.get('http://localhost:5000/ems',
+            const result=await axios.get(`${BaseURL}/ems`,
             { 
                 headers:{
                 'Content-Type':'application/json',
@@ -101,7 +105,7 @@ function ViewBudget() {
                     lim="Not Set"
                 }
             return(
-                <Grid item xs={4}>
+                <Grid item xs={isMobile?12:4}>
                             <Box className=" d-flex justify-content-center">
                             <div className="card mt-2" style={{"width": "80%"}}> 
                                 <div className="card-body" style={{"backgroundColor":color}}>
@@ -120,18 +124,7 @@ function ViewBudget() {
   return (
     <div className="container-fluid">
         <div className="row">
-            <nav className="navbar navbar-dark bg-dark">
-                <div className="container-fluid">
-                    <Link to="/home" element={<Home/>} className="navbar-brand">Expense Management System</Link>
-                    <form className="d-flex">
-                    <Link to="/add/expense" element={<AddExpense/>} className="navbar-brand">Add Expense </Link>  
-                    <Link to="/view/expense" element={<ViewExpense/>} className="navbar-brand">View Expense </Link>
-                    <Link to="/add/category" element={<AddCategory/>} className="navbar-brand">Add Category </Link>
-                    <Link to="/view/budget" element={<ViewBudget/>} className="navbar-brand">View Budget</Link>
-                    <button className="form-control me-2 btn btn-danger" type="submit" onClick={logOut}>LogOut</button>
-                    </form>
-                </div>
-            </nav>
+            <Header/>
             <div className='bg'>
                 <div className='bg bg2'>
                     <div className='bg bg3'>
@@ -139,10 +132,11 @@ function ViewBudget() {
                     </div>
                 </div>
             </div>
-            <div className='d-flex justify-content-center mt-4 mb-4'>
+            <div style={{display:!isMobile?'flex':'',marginTop:'10px',marginBottom:'15px',justifyContent:'center',textAlign:'center'}}>
                 <label><h4>View budget for month of &nbsp;</h4></label>
+                {/* {isMobile&&(<br/>)} */}
                 <select className='fw-bold' value={month} onChange={e=>setMonth(e.target.value)}>
-                    <option>--Select--</option>
+                    {/* <option>--Select--</option> */}
                     <option>January</option>
                     <option>February</option>
                     <option>March</option>
@@ -159,7 +153,7 @@ function ViewBudget() {
                 <label><h4>&nbsp; in year {year} &nbsp;</h4></label>
                 
             </div>
-            <div className='col-xl-1 d-flex justify-content-center' style={{
+            {!isMobile && (<div className='col-xl-1 d-flex justify-content-center' style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -169,14 +163,26 @@ function ViewBudget() {
                     
                     Previous
                 </button>
-            </div>
+            </div>)}
             <div className='col-xl-10 d-flex justify-content-center'>
                 <Grid container spacing={3}>
                     {renderCard()}
                 </Grid>
                 
             </div>
-            <div className='col-xl-1 d-flex justify-content-center' style={{
+            {isMobile && (
+                <div  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '20vh'
+                }}
+                >
+                    <button onClick={()=>setPage(page-1)} disabled={page===1?true:false}>Previous</button> &nbsp;
+                    <button onClick={()=>setPage(page+1)} disabled={page===range[range.length-1]?true:false} >Next</button>
+                </div>
+            )}
+            {!isMobile && (<div className='col-xl-1 d-flex justify-content-center' style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -186,7 +192,7 @@ function ViewBudget() {
                     Next
                     
                 </button>
-            </div>
+            </div>)}
         </div>
     </div>
   )

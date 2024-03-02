@@ -13,6 +13,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import "react-toastify/dist/ReactToastify.css";
 import useTable from './tableHooks';
+import EditDialog from './EditDialog'
+import Header from './Header'
+import { useMediaQuery } from '@chakra-ui/react'
+import { BaseURL } from './BaseURL'
 
 function ViewExpense() {
     const navigate=useNavigate();
@@ -27,7 +31,12 @@ function ViewExpense() {
     const [categoryData,setCategoryData]=useState([]);
     const [expense,setExpense]=useState([]);
     const [page,setPage]=useState(1); 
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const [expenseData,setExpenseData]=useState(null);
+    const [isMobile] = useMediaQuery('(max-width:600px)');
+
     let id=0,p=0;
+    let ignore=false;
 
     const handleStartDateChange=(e)=>{
         setStartDate(e.target.value);
@@ -42,7 +51,7 @@ function ViewExpense() {
     const getCategory = async(e) =>{
         try {
             const token=localStorage.getItem('user.token');
-            const result=await axios.get('http://localhost:5000/category',
+            const result=await axios.get(`${BaseURL}/category`,
             {   
                 params:{type:category},
                 headers:{
@@ -73,16 +82,18 @@ function ViewExpense() {
     const getExpenses=async(e)=>{
         try {
             const token=localStorage.getItem('user.token');
-            console.log(token);
-            const result=await axios.get('http://localhost:5000/ems',
+            // console.log(token);
+            const result=await axios.get(`${BaseURL}/ems`,
             { 
                 headers:{
                 'Content-Type':'application/json',
                 'Authorization':`Bearer ${token}`}
             })
-            if(result){
-                setExpense(result.data)
+            if(result.data!==expense){
+                setExpense(result.data);
+                ignore=(!ignore);
             }
+            
         } catch (error) {
             console.log(error)
         }
@@ -117,13 +128,23 @@ function ViewExpense() {
         }
         
     }
-    const editExp=()=>{
-        console.log("edit")
+    const editExp=(exp)=>{
+        setDialogOpen(true);
+        setExpenseData(exp); 
     }
+
+    const closeDialog = () => {
+        // Close the dialog
+        getExpenses();
+        setDialogOpen(false);
+
+    };
+
+
     const deleteExp=(id)=>{
         try {
             const token=localStorage.getItem('user.token');
-            axios.delete(`http://localhost:5000/ems/${id}`,
+            axios.delete(`${BaseURL}/ems/${id}`,
             { 
                 headers:{
                 'Content-Type':'application/json',
@@ -150,19 +171,15 @@ function ViewExpense() {
                     <td>{newDate}</td>
                     <td>{exp.category}</td>
                     <td>{exp.money}</td>
-                    <td><EditIcon onClick={editExp}/>&nbsp;&nbsp;&nbsp;&nbsp;<DeleteIcon  onClick={()=>deleteExp(temp)}/></td>
+                    <td><EditIcon onClick={()=>editExp(exp)}/>{!isMobile && (<>&nbsp;&nbsp;&nbsp;&nbsp;</>)}<DeleteIcon  onClick={()=>deleteExp(temp)}/></td>
                 </tr>
             )
             }
         )
     }
     useEffect(()=>{
-        let ignore=false;
-        if(!ignore){
             getExpenses();
-        }
-        return () => { ignore = true; }
-    },[expense])
+    },[ignore])
 
     const handlePrev=()=>{
         setPage(page-1);        
@@ -173,19 +190,7 @@ function ViewExpense() {
   return (
     <div className="container-fluid">
         <div className="row">
-            
-            <nav className="navbar navbar-dark bg-dark">
-                <div className="container-fluid">
-                    <Link to="/home" element={<Home/>} className="navbar-brand">Expense Management System</Link>
-                    <form className="d-flex">
-                    <Link to="/add/expense" element={<AddExpense/>} className="navbar-brand">Add Expense </Link>  
-                    <Link to="/view/expense" element={<ViewExpense/>} className="navbar-brand">View Expense </Link>
-                    <Link to="/add/category" element={<AddCategory/>} className="navbar-brand">Add Category </Link>
-                    <Link to="/view/budget" element={<ViewBudget/>} className="navbar-brand">View Budget</Link>
-                    <button className="form-control me-2 btn btn-danger" type="submit" onClick={logOut}>LogOut</button>
-                    </form>
-                </div>
-            </nav>
+           <Header/>
             <div className='bg'>
                 <div className='bg bg2'>
                     <div className='bg bg3'>
@@ -216,7 +221,7 @@ function ViewExpense() {
                             onChange={handleEndDateChange}
                 />
             </div>
-                <div className='col-xl-2 d-flex justify-content-center' 
+                {!isMobile && (<div className='col-xl-2 d-flex justify-content-center' 
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -225,7 +230,7 @@ function ViewExpense() {
                         }}>
                             <button onClick={handlePrev} disabled={page===1?true:false} ><KeyboardDoubleArrowLeftIcon/>Previous</button>
                     
-                </div>
+                </div>)}
                 <div className="col-xl-8 ">
                     <div className='tableFixHead d-flex justify-content-center mt-4'>
                         <table id="expenses" className="table">
@@ -247,7 +252,26 @@ function ViewExpense() {
 
                     </div>
                 </div>
-                <div className='col-xl-2 d-flex justify-content-center'style={{
+                {isDialogOpen && (
+                    <EditDialog exp={expenseData} fun={closeDialog}/>
+                )}
+                {
+                    isMobile && (
+                        <div className='col-xl-2 d-flex justify-content-center' 
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '60vh'
+                        }}>
+                            <button onClick={handlePrev} disabled={page===1?true:false} ><KeyboardDoubleArrowLeftIcon/>Previous</button>
+                            &nbsp;
+                            <button onClick={handleNext} disabled={page===range[range.length-1]?true:false}>Next<KeyboardDoubleArrowRightIcon/></button>
+                        </div>
+                    )
+                }
+                
+               {!isMobile && ( <div className='col-xl-2 d-flex justify-content-center'style={{
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -257,7 +281,7 @@ function ViewExpense() {
                         
                     >Next<KeyboardDoubleArrowRightIcon/></button>
                     
-                </div>
+                </div>)}
         </div>
     </div>
   )
