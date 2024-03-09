@@ -46,12 +46,10 @@ function Login() {
                         'content-type':'application/json',
                     }
                 });
-            console.log(verify);
             window.localStorage.setItem('user.token',verify.data.token);
             window.localStorage.setItem('user-name',verify.data.user.name);
            
             if(verify){
-                console.log(verify.data.token);
                 navigate("/Home");
             }
         }catch(e){
