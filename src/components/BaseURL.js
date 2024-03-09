@@ -1,1 +1,1 @@
-export const BaseURL=process.env.BASE_URL;
+export const BaseURL='https://ems-backend-yssh.onrender.com';
