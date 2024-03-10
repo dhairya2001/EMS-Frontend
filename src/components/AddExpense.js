@@ -76,7 +76,6 @@ function AddExpense() {
     const addExpense = async(e) =>{
         try{
             const token=localStorage.getItem('user.token');
-            console.log(token);
             const req=await axios.post(`${BaseURL}/ems`,{
                 date:date,category:category,money:money},
                 { 
@@ -84,7 +83,6 @@ function AddExpense() {
                     'Content-Type':'application/json',
                     'Authorization':`Bearer ${token}`
                 }});
-            console.log(req)
             if(req){
                 toast.success('Expense Added', {
                     position: "top-right",

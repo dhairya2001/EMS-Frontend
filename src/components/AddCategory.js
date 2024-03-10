@@ -32,7 +32,6 @@ function AddCategory() {
     const addCategory = async(e) =>{
         try{
             const token=localStorage.getItem('user.token');
-            console.log(token);
             const req=await axios.post(`${BaseURL}/category`,{
                 type:category,limit:budget},
                 { 
@@ -40,7 +39,6 @@ function AddCategory() {
                     'Content-Type':'application/json',
                     'Authorization':`Bearer ${token}`
                 }});
-            console.log(req)
             if(req){
                 toast.success(' Added Category', {
                     position: "top-right",
@@ -57,7 +55,16 @@ function AddCategory() {
             }
         }
         catch(e){
-            console.log(e);
+            toast.error(' Error Occured ', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark"
+                })
         }
     }
     const handleSubmit=(e)=>{

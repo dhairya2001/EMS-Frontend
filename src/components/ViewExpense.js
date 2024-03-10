@@ -59,9 +59,9 @@ function ViewExpense() {
                 'Authorization':`Bearer ${token}`}
             })
             .then(json=>setCategoryData(json.data));
-            if(result){
-                console.log("fetched")
-            }
+            // if(result){
+            //     console.log("fetched")
+            // }
             
         } catch (error) {
             console.log(error);
@@ -82,7 +82,6 @@ function ViewExpense() {
     const getExpenses=async(e)=>{
         try {
             const token=localStorage.getItem('user.token');
-            // console.log(token);
             const result=await axios.get(`${BaseURL}/ems`,
             { 
                 headers:{

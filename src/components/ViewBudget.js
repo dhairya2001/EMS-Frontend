@@ -46,7 +46,6 @@ function ViewBudget() {
     const getExpenses=async(e)=>{
         try {
             const token=localStorage.getItem('user.token');
-            console.log(token);
             const result=await axios.get(`${BaseURL}/ems`,
             { 
                 headers:{
@@ -91,7 +90,6 @@ function ViewBudget() {
         return(list)
     }
     var filterlist=useMemo(handleChange,[categoryData, expenseData, month]);
-    console.log(filterlist)
     const {slice,range}=useTable(filterlist,page,rows);
     const renderCard=()=>{
         return slice.map(exp=>{

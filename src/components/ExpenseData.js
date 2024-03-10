@@ -11,18 +11,16 @@ export const ExpenseData=()=> {
     const getCategory = async(e) =>{
         try {
             const token=localStorage.getItem('user.token');
-            // console.log(token);
             const result=await axios.get(`${BaseURL}/category`,
             {   
-                // params:{type:category},
                 headers:{
                 'Content-Type':'application/json',
                 'Authorization':`Bearer ${token}`}
             })
             .then(json=>setData(json.data));
-            if(result){
-                // console.log("fetched")
-            }
+            // if(result){
+            //     console.log("fetched")
+            // }
             
         } catch (error) {
             console.log(error);
